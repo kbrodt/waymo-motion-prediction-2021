@@ -272,7 +272,6 @@ def main():
                 f" {scheduler.get_last_lr()[-1]:.3}"
             )
             summary_writer.add_scalar("train/loss", loss.item(), iteration)
-            summary_writer.add_scalar("train/avg_loss", np.mean(glosses[-100:]), iteration)
             summary_writer.add_scalar("lr", scheduler.get_last_lr()[-1], iteration)
 
         if (iteration + 1) % args.n_monitor_validate == 0:
