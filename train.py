@@ -84,22 +84,40 @@ def parse_args():
     return args
 
 
-def get_model(model_name, in_ch=IN_CHANNELS, timelimit=TL, n_traj=N_TRAJS):
-    if model_name.startswith("efficientnet"):
-        model = EfficientNet.from_pretrained(
-            "efficientnet-b3",
-            in_channels=in_ch,
-            num_classes=n_traj * 2 * timelimit + n_traj,
-        )
-    else:
-        model = timm.create_model(
-            model_name,
-            pretrained=True,
-            in_chans=in_ch,
-            num_classes=n_traj * 2 * timelimit + n_traj,
-        )
+class Model(nn.Module):
+    def __init__(
+        self, model_name, in_channels=IN_CHANNELS, time_limit=TL, n_traj=N_TRAJS
+    ):
+        super().__init__()
 
-    return model
+        if model_name.startswith("efficientnet"):
+            model = EfficientNet.from_pretrained(
+                model_name,
+                in_channels=in_channels,
+                num_classes=n_traj * 2 * time_limit + n_traj,
+            )
+        else:
+            model = timm.create_model(
+                model_name,
+                pretrained=True,
+                in_chans=in_channels,
+                num_classes=n_traj * 2 * time_limit + n_traj,
+            )
+
+        self.n_traj = n_traj
+        self.time_limit = time_limit
+        self.model = model
+
+    def forward(self, x):
+        outputs = self.model(x)
+
+        confidences_logits, logits = (
+            outputs[:, : self.n_traj],
+            outputs[:, self.n_traj :],
+        )
+        logits = logits.view(-1, self.n_traj, self.time_limit, 2)
+
+        return confidences_logits, logits
 
 
 def pytorch_neg_multi_log_likelihood_batch(gt, logits, confidences, avails):
@@ -138,7 +156,7 @@ def pytorch_neg_multi_log_likelihood_batch(gt, logits, confidences, avails):
 
 
 class WaymoLoader(Dataset):
-    def __init__(self, directory, limit=0, return_vector=False):
+    def __init__(self, directory, limit=0, return_vector=False, is_test=False):
         files = os.listdir(directory)
         self.files = [os.path.join(directory, f) for f in files if f.endswith(".npz")]
 
@@ -148,6 +166,7 @@ class WaymoLoader(Dataset):
             self.files = sorted(self.files)
 
         self.return_vector = return_vector
+        self.is_test = is_test
 
     def __len__(self):
         return len(self.files)
@@ -159,14 +178,30 @@ class WaymoLoader(Dataset):
         raster = data["raster"].astype("float32")
         raster = raster.transpose(2, 1, 0) / 255
 
-        trajectory = data["gt_marginal"]  # .astype("float32")
+        if self.is_test:
+            center = data["shift"]
+            yaw = data["yaw"]
+            agent_id = data["object_id"]
+            scenario_id = data["scenario_id"]
 
-        valid = data["future_val_marginal"]
+            return (
+                raster,
+                center,
+                yaw,
+                agent_id,
+                str(scenario_id),
+                data["_gt_marginal"],
+                data["gt_marginal"],
+            )
+
+        trajectory = data["gt_marginal"]
+
+        is_available = data["future_val_marginal"]
 
         if self.return_vector:
-            return raster, trajectory, valid, data["vector_data"]
+            return raster, trajectory, is_available, data["vector_data"]
 
-        return raster, trajectory, valid
+        return raster, trajectory, is_available
 
 
 def main():
@@ -176,9 +211,9 @@ def main():
 
     train_path = args.train_data
     dev_path = args.dev_data
-    PATH_TO_SAVE = args.save
-    if not os.path.exists(PATH_TO_SAVE):
-        os.mkdir(PATH_TO_SAVE)
+    path_to_save = args.save
+    if not os.path.exists(path_to_save):
+        os.mkdir(path_to_save)
 
     dataset = WaymoLoader(train_path)
 
@@ -206,8 +241,8 @@ def main():
     model_name = args.model
     time_limit = args.time_limit
     n_traj = args.n_traj
-    model = get_model(
-        model_name, in_ch=args.in_channels, timelimit=time_limit, n_traj=n_traj
+    model = Model(
+        model_name, in_channels=args.in_channels, time_limit=time_limit, n_traj=n_traj
     )
     model.cuda()
 
@@ -239,27 +274,26 @@ def main():
             "scheduler_state_dict": scheduler.state_dict(),
             "loss": loss.item(),
         },
-        os.path.join(PATH_TO_SAVE, name),
+        os.path.join(path_to_save, name),
     )
 
     for iteration in progress_bar:
         model.train()
         try:
-            x, y, valid = next(tr_it)
+            x, y, is_available = next(tr_it)
         except StopIteration:
             tr_it = iter(dataloader)
-            x, y, valid = next(tr_it)
+            x, y, is_available = next(tr_it)
 
-        x, y, valid = map(lambda x: x.cuda(), (x, y, valid))
+        x, y, is_available = map(lambda x: x.cuda(), (x, y, is_available))
 
         optimizer.zero_grad()
 
-        outputs = model(x)
-        confidences, logits = outputs[:, :n_traj], outputs[:, n_traj:]
-        bs = x.shape[0]
-        logits = logits.view(bs, n_traj, time_limit, 2)
+        confidences_logits, logits = model(x)
 
-        loss = pytorch_neg_multi_log_likelihood_batch(y, logits, confidences, valid)
+        loss = pytorch_neg_multi_log_likelihood_batch(
+            y, logits, confidences_logits, is_available
+        )
         loss.backward()
         optimizer.step()
         scheduler.step()
@@ -279,15 +313,12 @@ def main():
             model.eval()
             with torch.no_grad():
                 val_losses = []
-                for x, y, valid in val_dataloader:
-                    x, y, valid = map(lambda x: x.cuda(), (x, y, valid))
+                for x, y, is_available in val_dataloader:
+                    x, y, is_available = map(lambda x: x.cuda(), (x, y, is_available))
 
-                    outputs = model(x)
-                    confidences, logits = outputs[:, :n_traj], outputs[:, n_traj:]
-                    bs = x.shape[0]
-                    logits = logits.view(bs, n_traj, time_limit, 2)
+                    confidences_logits, logits = model(x)
                     loss = pytorch_neg_multi_log_likelihood_batch(
-                        y, logits, confidences, valid
+                        y, logits, confidences_logits, is_available
                     )
                     val_losses.append(loss.item())
 
@@ -309,7 +340,7 @@ def main():
                         ).cuda(),
                     )
 
-                traced_model.save(os.path.join(PATH_TO_SAVE, "model_best.pt"))
+                traced_model.save(os.path.join(path_to_save, "model_best.pt"))
                 del traced_model
 
 
