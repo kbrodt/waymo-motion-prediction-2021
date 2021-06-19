@@ -47,6 +47,15 @@ python train.py \
     --n-epochs 120
 ```
 
+## Submit
+
+```bash
+python submit.py \
+    --test-data ./test/ \
+    --model-path ${MODEL_PATH_TO_JIT} \
+    --save ${SAVE}
+```
+
 ## Useful links
 
 * [kaggle lyft 3rd place solution](https://gdude.de/blog/2021-02-05/Kaggle-Lyft-solution)
