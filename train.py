@@ -5,7 +5,6 @@ import numpy as np
 import timm
 import torch
 import torch.nn as nn
-from efficientnet_pytorch import EfficientNet
 from torch.utils.data import DataLoader, Dataset
 from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
@@ -90,23 +89,15 @@ class Model(nn.Module):
     ):
         super().__init__()
 
-        if model_name.startswith("efficientnet"):
-            model = EfficientNet.from_pretrained(
-                model_name,
-                in_channels=in_channels,
-                num_classes=n_traj * 2 * time_limit + n_traj,
-            )
-        else:
-            model = timm.create_model(
-                model_name,
-                pretrained=True,
-                in_chans=in_channels,
-                num_classes=n_traj * 2 * time_limit + n_traj,
-            )
-
         self.n_traj = n_traj
         self.time_limit = time_limit
-        self.model = model
+        self.model = timm.create_model(
+            model_name,
+            pretrained=True,
+            in_chans=in_channels,
+            num_classes=self.n_traj * 2 * self.time_limit + self.n_traj,
+        )
+
 
     def forward(self, x):
         outputs = self.model(x)
