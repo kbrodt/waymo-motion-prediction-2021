@@ -59,6 +59,16 @@ python submit.py \
     --save ${SAVE}
 ```
 
+
+## Visualize predictions
+
+```bash
+python visualize.py \
+    --model ${MODEL_PATH_TO_JIT} \
+    --data ${DATA_PATH} \
+    --save ./viz
+```
+
 ## Useful links
 
 * [kaggle lyft 3rd place solution](https://gdude.de/blog/2021-02-05/Kaggle-Lyft-solution)
