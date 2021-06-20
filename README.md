@@ -1,6 +1,7 @@
 # Waymo challenge 2021: motion prediction
 
 [Motion Prediction](https://waymo.com/open/challenges/2021/motion-prediction/)
+
 [CVPR2021 workshop](http://cvpr2021.wad.vision/)
 
 ## Dataset
@@ -21,11 +22,13 @@ python prerender.py \
 python prerender.py \
     --data /home/data/waymo/validation \
     --out ./dev \
+    --use-vectorize \
     --n-shards 1
     
 python prerender.py \
     --data /home/data/waymo/testing \
     --out ./test \
+    --use-vectorize \
     --n-shards 1
 ```
 
