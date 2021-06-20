@@ -43,8 +43,8 @@ def main():
 
             confidences_logits, logits = model(x)
 
+            argmax = confidences_logits.argmax()
             if args.use_top1:
-                argmax = confidences_logits.argmax()
                 confidences_logits = confidences_logits[:, argmax].unsqueeze(1)
                 logits = logits[:, argmax].unsqueeze(1)
 
@@ -72,24 +72,26 @@ def main():
                 y[is_available > 0][::10, 0],
                 y[is_available > 0][::10, 1],
                 "-o",
-                label="GT",
+                label="gt",
             )
 
-            if args.use_top1:
-                plt.plot(
-                    logits[confidences.argmax()][is_available > 0][::10, 0],
-                    logits[confidences.argmax()][is_available > 0][::10, 1],
-                    "-o",
-                    label="PRED",
-                )
-            else:
+            plt.plot(
+                logits[confidences.argmax()][is_available > 0][::10, 0],
+                logits[confidences.argmax()][is_available > 0][::10, 1],
+                "-o",
+                label="pred top 1",
+            )
+            if not args.use_top1:
                 for traj_id in range(len(logits)):
+                    if traj_id == argmax:
+                        continue
+
                     alpha = confidences[traj_id].item()
                     plt.plot(
                         logits[traj_id][is_available > 0][::10, 0],
                         logits[traj_id][is_available > 0][::10, 1],
                         "-o",
-                        label=f"PRED_{traj_id} {alpha:.3f}",
+                        label=f"pred {traj_id} {alpha:.3f}",
                         alpha=alpha,
                     )
 
