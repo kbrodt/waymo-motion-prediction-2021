@@ -16,6 +16,7 @@ def parse_args():
     parser.add_argument("--data", type=str, required=True)
     parser.add_argument("--save", type=str, required=True)
     parser.add_argument("--n-samples", type=int, required=False, default=50)
+    parser.add_argument("--use-top1", action="store_true")
 
     args = parser.parse_args()
 
@@ -42,9 +43,10 @@ def main():
 
             confidences_logits, logits = model(x)
 
-            argmax = confidences_logits.argmax()
-            confidences_logits = confidences_logits[:, argmax].unsqueeze(1)
-            logits = logits[:, argmax].unsqueeze(1)
+            if args.use_top1:
+                argmax = confidences_logits.argmax()
+                confidences_logits = confidences_logits[:, argmax].unsqueeze(1)
+                logits = logits[:, argmax].unsqueeze(1)
 
             loss = pytorch_neg_multi_log_likelihood_batch(
                 y, logits, confidences_logits, is_available
@@ -61,21 +63,36 @@ def main():
                     plt.plot(_X[:, 0], _X[:, 1], linewidth=4, color="purple")
                 else:
                     plt.plot(_X[:, 0], _X[:, 1], color="black")
-            logits = logits.cpu().numpy()[0]
-            y = y.cpu().numpy()[0]
-            is_available = is_available.long().cpu().numpy()[0]
+
+            logits = logits.squeeze(0).cpu().numpy()
+            y = y.squeeze(0).cpu().numpy()
+            is_available = is_available.squeeze(0).long().cpu().numpy()
+            confidences = confidences.squeeze(0).cpu().numpy()
             plt.plot(
                 y[is_available > 0][::10, 0],
                 y[is_available > 0][::10, 1],
                 "-o",
                 label="GT",
             )
-            plt.plot(
-                logits[confidences[0].argmax()][is_available > 0][::10, 0],
-                logits[confidences[0].argmax()][is_available > 0][::10, 1],
-                "-o",
-                label="PRED",
-            )
+
+            if args.use_top1:
+                plt.plot(
+                    logits[confidences.argmax()][is_available > 0][::10, 0],
+                    logits[confidences.argmax()][is_available > 0][::10, 1],
+                    "-o",
+                    label="PRED",
+                )
+            else:
+                for traj_id in range(len(logits)):
+                    alpha = confidences[traj_id].item()
+                    plt.plot(
+                        logits[traj_id][is_available > 0][::10, 0],
+                        logits[traj_id][is_available > 0][::10, 1],
+                        "-o",
+                        label=f"PRED_{traj_id} {alpha:.3f}",
+                        alpha=alpha,
+                    )
+
 
             plt.title(loss.item())
             plt.legend()
@@ -83,6 +100,7 @@ def main():
                 os.path.join(args.save, f"{iii:0>2}_{loss.item():.3f}.png")
             )
             plt.close()
+
             iii += 1
             if iii == args.n_samples:
                 break
