@@ -60,9 +60,11 @@ def main():
             for i in np.unique(idx):
                 _X = X[idx == i]
                 if _X[:, 5:12].sum() > 0:
-                    plt.plot(_X[:, 0], _X[:, 1], linewidth=4, color="purple")
+                    plt.plot(_X[:, 0], _X[:, 1], linewidth=4, color="red")
                 else:
                     plt.plot(_X[:, 0], _X[:, 1], color="black")
+                plt.xlim([-224 // 4, 224 // 4])
+                plt.ylim([-224 // 4, 224 // 4])
 
             logits = logits.squeeze(0).cpu().numpy()
             y = y.squeeze(0).cpu().numpy()
