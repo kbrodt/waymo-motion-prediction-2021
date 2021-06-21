@@ -60,7 +60,7 @@ def parse_args():
     )
     parser.add_argument("--lr", type=float, required=False, default=1e-3)
     parser.add_argument("--batch-size", type=int, required=False, default=48)
-    parser.add_argument("--n-epochs", type=int, required=False, default=120)
+    parser.add_argument("--n-epochs", type=int, required=False, default=60)
 
     parser.add_argument("--valid-limit", type=int, required=False, default=24 * 100)
     parser.add_argument(

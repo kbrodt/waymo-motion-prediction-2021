@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from submission_proto import motion_submission_pb2
-from train import WaymoLoader
+from train import WaymoLoader, Model
 
 
 def parse_args():
@@ -27,6 +27,9 @@ def parse_args():
     )
     parser.add_argument(
         "--save", type=str, required=True, help="Path to save predictions"
+    )
+    parser.add_argument(
+        "--model-name", type=str, required=False, help="Model name"
     )
 
     parser.add_argument("--account-name", required=False, default="")
@@ -44,7 +47,12 @@ def main():
     args = parse_args()
     print(args)
 
-    model = torch.jit.load(args.model_path)
+    if args.model_path.endswith("pth"):
+        model = Model(args.model_name)
+        model.load_state_dict(torch.load(args.model_path)["model_state_dict"])
+    else:
+        model = torch.jit.load(args.model_path)
+
     model.cuda()
     model.eval()
 
