@@ -4,6 +4,9 @@
 
 [CVPR2021 workshop](http://cvpr2021.wad.vision/)
 
+[presentation](./docs/waymo_motion_prediction_2021_3rd_place_solution_presentation.pdf)
+[technical report](./docs/CVPR2021_Waymo_motion_prediction.pdf)
+
 ## Dataset
 
 Download
