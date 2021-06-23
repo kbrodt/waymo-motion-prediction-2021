@@ -1,14 +1,18 @@
-# Waymo challenge 2021: motion prediction
+# Waymo motion prediction challenge 2021: 3rd place solution
 
-[Motion Prediction](https://waymo.com/open/challenges/2021/motion-prediction/)
+![header](docs/header.png)
 
-[CVPR2021 workshop](http://cvpr2021.wad.vision/)
+- 📜[**Technical report**](./docs/CVPR2021_Waymo_motion_prediction.pdf)   
+- 🗨️[Presentation](./docs/waymo_motion_prediction_2021_3rd_place_solution_presentation.pdf)  
+- 🎉[Announcement](https://youtu.be/eOL_rCK59ZI?t=6485)    
+- 🛆[Motion Prediction Channel Website](https://waymo.com/open/challenges/2021/motion-prediction/)  
+- 🛆[CVPR2021 workshop](http://cvpr2021.wad.vision/)  
 
-[presentation](./docs/waymo_motion_prediction_2021_3rd_place_solution_presentation.pdf)
 
-[technical report](./docs/CVPR2021_Waymo_motion_prediction.pdf)
-
-[announcement](https://youtu.be/eOL_rCK59ZI?t=6485)
+## Team behind this solution:
+1. Artsiom Sanakoyeu [[Homepage](https://gdude.de)] [[Twitter](https://twitter.com/artsiom_s)] [[Telegram Channel](https://t.me/gradientdude)] [[LinkedIn](https://www.linkedin.com/in/sanakoev)]
+2. Stepan Konev [[LinkedIn]](https://www.linkedin.com/in/stepan-konev/)
+3. Kirill Brodt [[GitHub]](https://github.com/kbrodt)
 
 ## Dataset
 
@@ -75,6 +79,16 @@ python visualize.py \
     --save ./viz
 ```
 
-## Useful links
+## Citation
+If you find our work useful, please cite it as:
+```
+@article{konev2021motioncnn,
+  title={MotionCNN: A Strong Baseline for Motion Prediction in Autonomous Driving},
+  author={Konev, Stepan and Brodt, Kirill and Sanakoyeu, Artsiom},
+  year={2021}
+}
+```
 
-* [kaggle lyft 3rd place solution](https://gdude.de/blog/2021-02-05/Kaggle-Lyft-solution)
+## Related repos
+
+* [Kaggle Lyft motion prediciton 3rd place solution](https://gdude.de/blog/2021-02-05/Kaggle-Lyft-solution)
