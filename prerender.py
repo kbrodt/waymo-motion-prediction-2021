@@ -703,8 +703,8 @@ def vectorize(
                 tmp[0] = x
                 tmp[1] = y
                 tmp[2] = other_speed
-                tmp[3] = other_v_yaw + ANGLE
-                tmp[4] = other_bbox_yaw + ANGLE
+                tmp[3] = other_v_yaw - ANGLE
+                tmp[4] = other_bbox_yaw - ANGLE
                 tmp[5] = float(other_l)
                 tmp[6] = float(other_w)
 
