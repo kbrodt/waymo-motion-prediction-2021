@@ -1,5 +1,8 @@
 # Waymo motion prediction challenge 2021: 3rd place solution
 
+## Update
+We provide a new repo for Waymo Motion Prediction Challenge 2022 with significant quality improvements. Feel free to check it out https://github.com/stepankonev/waymo-motion-prediction-challenge-2022-multipath-plus-plus
+
 ![header](docs/header.png)
 
 - 📜[**Technical report**](./docs/CVPR2021_Waymo_motion_prediction.pdf)   
