@@ -89,6 +89,7 @@ If you find our work useful, please cite it as:
   title={MotionCNN: A Strong Baseline for Motion Prediction in Autonomous Driving},
   author={Konev, Stepan and Brodt, Kirill and Sanakoyeu, Artsiom},
   year={2021}
+  booktitle={Workshop on Autonomous Driving, CVPR}
 }
 ```
 
