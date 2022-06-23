@@ -5,7 +5,7 @@ We provide a new repo for Waymo Motion Prediction Challenge 2022 with significan
 
 ![header](docs/header.png)
 
-- 📜[**Technical report**](./docs/CVPR2021_Waymo_motion_prediction.pdf)   
+- 📜[**Paper**](https://arxiv.org/abs/2206.02163)  
 - 🗨️[Presentation](./docs/waymo_motion_prediction_2021_3rd_place_solution_presentation.pdf)  
 - 🎉[Announcement](https://youtu.be/eOL_rCK59ZI?t=6485)    
 - 🛆[Motion Prediction Channel Website](https://waymo.com/open/challenges/2021/motion-prediction/)  
