@@ -1,7 +1,4 @@
-# Waymo motion prediction challenge 2021: 3rd place solution
-
-## Update
-We provide a new repo for Waymo Motion Prediction Challenge 2022 with significant quality improvements. Feel free to check it out https://github.com/stepankonev/waymo-motion-prediction-challenge-2022-multipath-plus-plus
+# Waymo motion prediction challenge 2021: 3rd place solution 
 
 ![header](docs/header.png)
 
@@ -11,6 +8,7 @@ We provide a new repo for Waymo Motion Prediction Challenge 2022 with significan
 - 🛆[Motion Prediction Channel Website](https://waymo.com/open/challenges/2021/motion-prediction/)  
 - 🛆[CVPR2021 workshop](http://cvpr2021.wad.vision/)  
 
+-  **UPDATE❗** Related repo with [3rd place solution code](https://github.com/stepankonev/waymo-motion-prediction-challenge-2022-multipath-plus-plus) for Waymo Motion Prediction Challenge 2022 
 
 ## Team behind this solution:
 1. Artsiom Sanakoyeu [[Homepage](https://gdude.de)] [[Twitter](https://twitter.com/artsiom_s)] [[Telegram Channel](https://t.me/gradientdude)] [[LinkedIn](https://www.linkedin.com/in/sanakoev)]
