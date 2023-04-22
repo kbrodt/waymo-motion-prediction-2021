@@ -9,6 +9,7 @@
 - 🛆[CVPR2021 workshop](http://cvpr2021.wad.vision/)  
 
 -  **UPDATE❗** Related repo with [3rd place solution code](https://github.com/stepankonev/waymo-motion-prediction-challenge-2022-multipath-plus-plus) for Waymo Motion Prediction Challenge 2022 
+-  **UPDATE❗** Related repo with [refactored code for MotionCNN](https://github.com/stepankonev/MotionCNN-Waymo-Open-Motion-Dataset)
 
 ## Team behind this solution:
 1. Artsiom Sanakoyeu [[Homepage](https://gdude.de)] [[Twitter](https://twitter.com/artsiom_s)] [[Telegram Channel](https://t.me/gradientdude)] [[LinkedIn](https://www.linkedin.com/in/sanakoev)]
@@ -83,11 +84,13 @@ python visualize.py \
 ## Citation
 If you find our work useful, please cite it as:
 ```
-@article{konev2021motioncnn,
-  title={MotionCNN: A Strong Baseline for Motion Prediction in Autonomous Driving},
-  author={Konev, Stepan and Brodt, Kirill and Sanakoyeu, Artsiom},
-  year={2021}
-  booktitle={Workshop on Autonomous Driving, CVPR}
+@misc{konev2022motioncnn,
+      title={MotionCNN: A Strong Baseline for Motion Prediction in Autonomous Driving}, 
+      author={Stepan Konev and Kirill Brodt and Artsiom Sanakoyeu},
+      year={2022},
+      eprint={2206.02163},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
 }
 ```
 
